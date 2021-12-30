@@ -1,0 +1,20 @@
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: {{ .Values.postgres.name }}
+spec:
+  teamId: "acid"
+  volume:
+    size: {{ .Values.postgres.size }}
+    storageClass: longhorn
+  numberOfInstances: {{ .Values.postgres.replicas }}
+  users:
+    # database owner
+    {{ .Values.postgres.db_user }}:
+    - superuser
+    - createdb
+  #databases: name->owner
+  databases:
+    {{ .Values.postgres.db_name }}: {{ .Values.postgres.db_user }}
+  postgresql:
+    version: {{ .Values.postgres.version | quote }}

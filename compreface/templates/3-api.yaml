@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: api
+  name: {{ .Values.api.name }}
+spec:
+  replicas: {{ .Values.api.replicas }}
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - env:
+            - name: API_JAVA_OPTS
+              value: '-Xmx4g'
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgres.db_user }}.{{ .Values.postgres.name }}.credentials.postgresql.acid.zalan.do
+                  key: password
+            - name: POSTGRES_URL
+              value: 'jdbc:postgresql://{{ .Values.postgres.name }}:{{ .Values.postgres.db_port }}/{{ .Values.postgres.db_name }}?ssl.mode=prefer'
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgres.db_user }}.{{ .Values.postgres.name }}.credentials.postgresql.acid.zalan.do
+                  key: username
+            - name: SAVE_IMAGES_TO_DB
+              value: 'true'
+            - name: SPRING_PROFILES_ACTIVE
+              value: 'dev'
+            - name: PYTHON_URL
+              value: {{ .Values.api.coreUrl }}
+          image: '{{ .Values.api.repository }}:{{ .Values.api.tag }}'
+          ports:
+          - containerPort: {{ .Values.api.port }}
+          name: {{ .Values.api.name }}
+          resources:
+            limits:
+              memory: 5Gi
+            requests:
+              memory: 4Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: compreface-api
+spec:
+  type: ClusterIP
+  selector:
+      app: api
+  ports:
+  - port: {{ .Values.api.port }}

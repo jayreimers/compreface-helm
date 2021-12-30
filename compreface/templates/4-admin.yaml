@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: admin
+  name: {{ .Values.admin.name }}
+spec:
+  replicas: {{ .Values.admin.replicas }}
+  selector:
+    matchLabels:
+      app: admin
+  template:
+    metadata:
+      labels:
+        app: admin
+    spec:
+      containers:
+        - env:
+            - name: ADMIN_JAVA_OPTS
+              value: '-Xmx4g'
+            - name: EMAIL_FROM
+              value: 'jay@dasreimers.com'
+            - name: EMAIL_HOST
+              value: '192.168.1.202'
+            # - name: EMAIL_PASSWORD
+            #   value: ''
+            # - name: EMAIL_USERNAME
+            #   value: ''
+            - name: ENABLE_EMAIL_SERVER
+              value: 'false'
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgres.db_user }}.{{ .Values.postgres.name }}.credentials.postgresql.acid.zalan.do
+                  key: password
+            - name: POSTGRES_URL
+              value: 'jdbc:postgresql://{{ .Values.postgres.name }}:{{ .Values.postgres.db_port }}/{{ .Values.postgres.db_name }}'
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgres.db_user }}.{{ .Values.postgres.name }}.credentials.postgresql.acid.zalan.do
+                  key: username
+            - name: SPRING_PROFILES_ACTIVE
+              value: 'dev'
+          image: '{{ .Values.admin.repository }}:{{ .Values.admin.tag }}'
+          ports:
+          - containerPort: {{ .Values.admin.port }}
+          name: {{ .Values.admin.name }}
+          resources:
+            limits:
+              memory: 5Gi
+            requests:
+              memory: 4Gi
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: compreface-admin
+spec:
+  type: ClusterIP
+  selector:
+      app: admin
+  ports:
+  - port: {{ .Values.admin.port }}
