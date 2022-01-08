@@ -16,22 +16,22 @@ postgres:
   version: 14
 
 core:
-  enabled: false
+  enabled: true
   repository: exadel/compreface-core
   pullPolicy: Always
-  tag: 0.6.1
+  tag: 0.6.1-arcface-r100-gpu
   port: 3000
   replicas: 1
   name: compreface-core
+  gpuEnabled: true
 
 api:
   repository: exadel/compreface-api
   pullPolicy: Always
   tag: 0.6.1
   port: 8080
-  replicas: 1
+  replicas: 2
   name: compreface-api
-  coreUrl: http://192.168.1.11:3000
 
 admin:
   repository: exadel/compreface-admin

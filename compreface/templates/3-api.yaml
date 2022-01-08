@@ -34,8 +34,10 @@ spec:
               value: 'true'
             - name: SPRING_PROFILES_ACTIVE
               value: 'dev'
+            {{- if .Values.api.coreUrl }}
             - name: PYTHON_URL
               value: {{ .Values.api.coreUrl }}
+            {{- end }}
           image: '{{ .Values.api.repository }}:{{ .Values.api.tag }}'
           ports:
           - containerPort: {{ .Values.api.port }}
