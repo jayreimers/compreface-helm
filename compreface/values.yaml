@@ -24,6 +24,16 @@ core:
   replicas: 1
   name: compreface-core
   gpuEnabled: true
+  affinity: {}
+    # podAffinity:
+    #   requiredDuringSchedulingIgnoredDuringExecution:
+    #   - labelSelector:
+    #       matchExpressions:
+    #       - key: security
+    #         operator: In
+    #         values:
+    #         - S1
+    #     topologyKey: topology.kubernetes.io/zone
 
 api:
   repository: exadel/compreface-api
@@ -40,6 +50,12 @@ admin:
   port: 8080
   replicas: 1
   name: compreface-admin
+  email:
+    enabled: false
+    host: smtp.gmail.com
+    username: ''
+    password: ''
+    fromAddress: noreply@example.org
 
 fe:
   repository: exadel/compreface-fe
@@ -48,6 +64,7 @@ fe:
   port: 80
   replicas: 1
   name: compreface-fe
+  host: chart-example.local
 
 
 imagePullSecrets: []

@@ -43,7 +43,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`compreface.dasreimers.com`)
+    - match: Host(`{{ .Values.fe.host }}`)
       kind: Rule
       services:
         - name: compreface-ui

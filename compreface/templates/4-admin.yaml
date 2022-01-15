@@ -19,15 +19,15 @@ spec:
             - name: ADMIN_JAVA_OPTS
               value: '-Xmx4g'
             - name: EMAIL_FROM
-              value: 'jay@dasreimers.com'
+              value: {{ .Values.admin.email.fromAddress }}
             - name: EMAIL_HOST
-              value: '192.168.1.202'
-            # - name: EMAIL_PASSWORD
-            #   value: ''
-            # - name: EMAIL_USERNAME
-            #   value: ''
+              value: {{ .Values.admin.email.host | quote }}
+            - name: EMAIL_PASSWORD
+              value: {{ .Values.admin.email.username | quote }}
+            - name: EMAIL_USERNAME
+              value: {{ .Values.admin.email.password | quote }}
             - name: ENABLE_EMAIL_SERVER
-              value: 'false'
+              value: {{ .Values.admin.email.enabled | quote }}
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:

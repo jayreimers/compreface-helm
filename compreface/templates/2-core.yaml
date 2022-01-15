@@ -28,6 +28,10 @@ spec:
             limits:
               nvidia.com/gpu: 1
           {{- end }}
+      {{- if .Values.core.affinity }}
+      affinity:
+{{ .Values.core.affinity | toYaml | indent 8 }}
+      {{- end }}
 ---
 apiVersion: v1
 kind: Service
