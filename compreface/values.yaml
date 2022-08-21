@@ -19,7 +19,7 @@ core:
   enabled: true
   repository: exadel/compreface-core
   pullPolicy: Always
-  tag: 0.6.1-arcface-r100-gpu
+  tag: 1.0.0-arcface-r100-gpu
   port: 3000
   replicas: 1
   name: compreface-core
@@ -38,7 +38,7 @@ core:
 api:
   repository: exadel/compreface-api
   pullPolicy: Always
-  tag: 0.6.1
+  tag: 1.0.0
   port: 8080
   replicas: 2
   name: compreface-api
@@ -46,7 +46,7 @@ api:
 admin:
   repository: exadel/compreface-admin
   pullPolicy: Always
-  tag: 0.6.1
+  tag: 1.0.0
   port: 8080
   replicas: 1
   name: compreface-admin
@@ -60,7 +60,7 @@ admin:
 fe:
   repository: exadel/compreface-fe
   pullPolicy: Always
-  tag: 0.6.1
+  tag: 1.0.0
   port: 80
   replicas: 1
   name: compreface-fe
