@@ -10,6 +10,8 @@ spec:
   selector:
     matchLabels:
       app: core
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
