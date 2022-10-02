@@ -35,19 +35,49 @@ spec:
   selector:
     app: fe
 ---
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
   name: compreface-ui
+  labels:
+    app: fe
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
-  entryPoints:
-    - websecure
-  routes:
-    - match: Host(`{{ .Values.fe.host }}`)
-      kind: Rule
-      services:
-        - name: compreface-ui
-          port: 8000
-          sticky:
-            cookie:
-              httpOnly: true
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            {{- if and .pathType (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
+            pathType: {{ .pathType }}
+            {{- end }}
+            backend:
+              {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
+              service:
+                name: compreface-ui
+                port:
+                  number: 8000
+              {{- else }}
+              serviceName: compreface-ui
+              servicePort: 8000
+              {{- end }}
+          {{- end }}
+    {{- end }}
+{{- end }}
